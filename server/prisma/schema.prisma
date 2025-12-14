@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  age       Int?
+  gender    String?
+  height    Float?   // in cm
+  weight    Float?   // in kg
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workouts       Workout[]
+  nutritionLogs  NutritionLog[]
+  measurements   BodyMeasurement[]
+  goals          Goal[]
+  refreshTokens  RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Workout {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  date        DateTime @default(now())
+  duration    Int?     // in minutes
+  exercises   Exercise[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("workouts")
+}
+
+model Exercise {
+  id          String  @id @default(uuid())
+  workoutId   String
+  name        String
+  sets        Int
+  reps        Int
+  weight      Float?  // in kg
+  notes       String?
+
+  workout Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@map("exercises")
+}
+
+model NutritionLog {
+  id          String   @id @default(uuid())
+  userId      String
+  date        DateTime @default(now())
+  mealType    String   // Breakfast, Lunch, Dinner, Snack
+  foodName    String
+  calories    Float
+  protein     Float    // in grams
+  carbs       Float    // in grams
+  fats        Float    // in grams
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("nutrition_logs")
+}
+
+model BodyMeasurement {
+  id        String   @id @default(uuid())
+  userId    String
+  date      DateTime @default(now())
+  weight    Float    // in kg
+  bodyFat   Float?   // percentage
+  chest     Float?   // in cm
+  waist     Float?   // in cm
+  hips      Float?   // in cm
+  arms      Float?   // in cm
+  thighs    Float?   // in cm
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("body_measurements")
+}
+
+model Goal {
+  id              String   @id @default(uuid())
+  userId          String
+  type            String   // weight_loss, muscle_gain, maintenance
+  targetWeight    Float?   // in kg
+  targetDate      DateTime?
+  dailyCalories   Float?
+  dailyProtein    Float?
+  dailyCarbs      Float?
+  dailyFats       Float?
+  weeklyWorkouts  Int?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("goals")
+}

@@ -1,0 +1,504 @@
+{
+  "info": {
+    "name": "Fitness Planner API",
+    "description": "Complete API collection for Fitness Planner backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Signup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('access_token', response.accessToken);",
+                  "    pm.environment.set('refresh_token', response.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"Test User\",\n  \"age\": 25,\n  \"gender\": \"male\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('access_token', response.accessToken);",
+                  "    pm.environment.set('refresh_token', response.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workouts",
+      "item": [
+        {
+          "name": "Get All Workouts",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/workouts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "workouts"]
+            }
+          }
+        },
+        {
+          "name": "Get Workout by ID",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/workouts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "workouts", ":id"],
+              "variable": [{"key": "id", "value": "workout-id-here"}]
+            }
+          }
+        },
+        {
+          "name": "Create Workout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Upper Body Workout\",\n  \"description\": \"Chest and triceps focus\",\n  \"duration\": 60,\n  \"exercises\": [\n    {\n      \"name\": \"Bench Press\",\n      \"sets\": 4,\n      \"reps\": 10,\n      \"weight\": 80,\n      \"notes\": \"Felt strong today\"\n    },\n    {\n      \"name\": \"Tricep Dips\",\n      \"sets\": 3,\n      \"reps\": 12,\n      \"weight\": 0\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/workouts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "workouts"]
+            }
+          }
+        },
+        {
+          "name": "Update Workout",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Workout Name\",\n  \"duration\": 75\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/workouts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "workouts", ":id"],
+              "variable": [{"key": "id", "value": "workout-id-here"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Workout",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/workouts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "workouts", ":id"],
+              "variable": [{"key": "id", "value": "workout-id-here"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Nutrition",
+      "item": [
+        {
+          "name": "Get Nutrition Logs",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/nutrition",
+              "host": ["{{base_url}}"],
+              "path": ["api", "nutrition"]
+            }
+          }
+        },
+        {
+          "name": "Get Daily Totals",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/nutrition/daily-totals",
+              "host": ["{{base_url}}"],
+              "path": ["api", "nutrition", "daily-totals"]
+            }
+          }
+        },
+        {
+          "name": "Create Nutrition Log",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mealType\": \"Breakfast\",\n  \"foodName\": \"Oatmeal with Banana\",\n  \"calories\": 350,\n  \"protein\": 12,\n  \"carbs\": 65,\n  \"fats\": 8\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/nutrition",
+              "host": ["{{base_url}}"],
+              "path": ["api", "nutrition"]
+            }
+          }
+        },
+        {
+          "name": "Update Nutrition Log",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"calories\": 375,\n  \"protein\": 15\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/nutrition/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "nutrition", ":id"],
+              "variable": [{"key": "id", "value": "log-id-here"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Nutrition Log",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/nutrition/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "nutrition", ":id"],
+              "variable": [{"key": "id", "value": "log-id-here"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Progress",
+      "item": [
+        {
+          "name": "Get All Measurements",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/progress",
+              "host": ["{{base_url}}"],
+              "path": ["api", "progress"]
+            }
+          }
+        },
+        {
+          "name": "Get Latest Measurement",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/progress/latest",
+              "host": ["{{base_url}}"],
+              "path": ["api", "progress", "latest"]
+            }
+          }
+        },
+        {
+          "name": "Get Progress Analysis",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/progress/analysis?days=30",
+              "host": ["{{base_url}}"],
+              "path": ["api", "progress", "analysis"],
+              "query": [{"key": "days", "value": "30"}]
+            }
+          }
+        },
+        {
+          "name": "Create Measurement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weight\": 75.5,\n  \"bodyFat\": 18.5,\n  \"chest\": 100,\n  \"waist\": 85,\n  \"hips\": 95,\n  \"arms\": 38,\n  \"thighs\": 58,\n  \"notes\": \"Morning measurement\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/progress",
+              "host": ["{{base_url}}"],
+              "path": ["api", "progress"]
+            }
+          }
+        },
+        {
+          "name": "Update Measurement",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weight\": 75.0,\n  \"bodyFat\": 18.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/progress/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "progress", ":id"],
+              "variable": [{"key": "id", "value": "measurement-id-here"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Measurement",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/progress/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "progress", ":id"],
+              "variable": [{"key": "id", "value": "measurement-id-here"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/user/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"age\": 26,\n  \"height\": 175,\n  \"weight\": 75\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/user/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Get All Goals",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/user/goals",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "goals"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Goal",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/user/goals/active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "goals", "active"]
+            }
+          }
+        },
+        {
+          "name": "Create Goal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"muscle_gain\",\n  \"targetWeight\": 80,\n  \"targetDate\": \"2026-06-01\",\n  \"dailyCalories\": 2800,\n  \"dailyProtein\": 150,\n  \"dailyCarbs\": 300,\n  \"dailyFats\": 80,\n  \"weeklyWorkouts\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/user/goals",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "goals"]
+            }
+          }
+        },
+        {
+          "name": "Update Goal",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dailyCalories\": 2900,\n  \"weeklyWorkouts\": 6\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/user/goals/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "goals", ":id"],
+              "variable": [{"key": "id", "value": "goal-id-here"}]
+            }
+          }
+        },
+        {
+          "name": "Delete Goal",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{access_token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/user/goals/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "goals", ":id"],
+              "variable": [{"key": "id", "value": "goal-id-here"}]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
